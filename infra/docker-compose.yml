@@ -1,0 +1,63 @@
+# Serviços de apoio do Mapeando para desenvolvimento local.
+#   docker compose -f infra/docker-compose.yml up -d            # postgis + redis
+#   docker compose -f infra/docker-compose.yml --profile osrm up -d
+#   docker compose -f infra/docker-compose.yml --profile nominatim up -d
+#
+# A API e o web rodam via pnpm (pnpm dev). Em produção, ver Blueprint §5
+# (Caddy/Traefik como ingress, imagens multi-stage, segredos em cofre).
+
+services:
+  postgis:
+    image: postgis/postgis:16-3.4
+    environment:
+      # superuser administrativo (BYPASSRLS) — usado por scripts/migrations
+      POSTGRES_USER: mapeando_admin
+      POSTGRES_PASSWORD: mapeando_admin
+      POSTGRES_DB: mapeando
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U mapeando']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    command: ['redis-server', '--save', '60', '1']
+    volumes:
+      - redisdata:/data
+
+  # ── OSRM (rotas/TSP). Requer preparar o extract uma vez (ver infra/README). ──
+  # Coloque o .osrm processado em infra/osrm/ antes de subir.
+  osrm:
+    image: osrm/osrm-backend:latest
+    profiles: ['osrm']
+    command: ['osrm-routed', '--algorithm', 'mld', '/data/brazil-latest.osrm']
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./osrm:/data
+
+  # ── Nominatim (geocodificação self-hosted; remove o limite de 1 req/s). ──
+  nominatim:
+    image: mediagis/nominatim:4.4
+    profiles: ['nominatim']
+    environment:
+      PBF_URL: https://download.geofabrik.de/south-america/brazil-latest.osm.pbf
+      IMPORT_STYLE: address
+    ports:
+      - '8080:8080'
+    volumes:
+      - nominatimdata:/var/lib/postgresql/14/main
+    shm_size: 1g
+
+volumes:
+  pgdata:
+  redisdata:
+  nominatimdata:

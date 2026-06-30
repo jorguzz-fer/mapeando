@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "outDir": "dist",
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "types": ["node"],
+    "verbatimModuleSyntax": false
+  },
+  "include": ["src", "scripts"]
+}
