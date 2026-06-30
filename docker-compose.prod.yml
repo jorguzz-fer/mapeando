@@ -1,0 +1,68 @@
+# Mapeando — stack de produção (deploy via Coolify "Docker Compose").
+# O Coolify injeta as variáveis do painel; preencha conforme .env.production.example.
+# Exponha publicamente APENAS o serviço `web` (ele faz proxy de /api).
+
+services:
+  postgis:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mapeando_admin
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+      POSTGRES_DB: mapeando
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U mapeando_admin -d mapeando']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ['redis-server', '--save', '60', '1']
+    volumes:
+      - redisdata:/data
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      API_PORT: 3333
+      WEB_ORIGIN: ${WEB_ORIGIN}
+      DATABASE_URL: postgresql://mapeando:${APP_DB_PASSWORD}@postgis:5432/mapeando
+      DATABASE_ADMIN_URL: postgresql://mapeando_admin:${POSTGRES_ADMIN_PASSWORD}@postgis:5432/mapeando
+      REDIS_URL: redis://redis:6379
+      SESSION_SECRET: ${SESSION_SECRET}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      ANTHROPIC_MODEL_CHAT: ${ANTHROPIC_MODEL_CHAT:-claude-sonnet-4-6}
+      ANTHROPIC_MODEL_MISSION: ${ANTHROPIC_MODEL_MISSION:-claude-opus-4-8}
+      OSRM_URL: ${OSRM_URL:-}
+      NOMINATIM_URL: ${NOMINATIM_URL:-}
+      NOMINATIM_USER_AGENT: ${NOMINATIM_USER_AGENT:-Mapeando/1.0}
+    depends_on:
+      postgis:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    # Coolify mapeia o domínio público para este serviço (porta 80).
+    ports:
+      - '80'
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  redisdata:
