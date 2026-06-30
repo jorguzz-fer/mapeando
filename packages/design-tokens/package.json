@@ -1,0 +1,21 @@
+{
+  "name": "@mapeando/design-tokens",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tailwind-preset": "./src/tailwind-preset.ts"
+  },
+  "scripts": {
+    "build": "echo \"(design-tokens) sem build\"",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "echo \"(design-tokens) sem lint\"",
+    "test": "echo \"(design-tokens) sem testes\""
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "mapeando",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mapeando — Copiloto de Inteligência Comercial (SaaS de planejamento de viagens comerciais com IA)",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "dev": "pnpm --parallel --filter ./apps/* dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md}\"",
+    "db:migrate": "pnpm --filter @mapeando/api db:migrate",
+    "db:seed": "pnpm --filter @mapeando/api db:seed",
+    "import": "pnpm --filter @mapeando/api import",
+    "geocode": "pnpm --filter @mapeando/api geocode"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["argon2", "esbuild"]
+  }
+}
