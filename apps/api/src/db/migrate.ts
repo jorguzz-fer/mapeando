@@ -15,7 +15,7 @@ const migrationsDir = join(here, 'migrations');
 
 async function ensureExtensions(client: pg.Client): Promise<void> {
   // Best-effort: em dev as extensões já existem; em prod o admin cria antes.
-  for (const ext of ['postgis', 'pg_trgm']) {
+  for (const ext of ['postgis', 'pg_trgm', 'unaccent']) {
     try {
       await client.query(`CREATE EXTENSION IF NOT EXISTS ${ext}`);
     } catch (err) {
