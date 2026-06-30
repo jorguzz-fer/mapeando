@@ -28,6 +28,11 @@ export class ClientsController {
     return clientsService.nearby(u.tenantId, parse(nearbyQuerySchema, query));
   }
 
+  @Get('map-points')
+  mapPoints(@CurrentUser() u: SessionUser) {
+    return clientsService.mapPoints(u.tenantId);
+  }
+
   @Get(':id')
   async get(@CurrentUser() u: SessionUser, @Param('id') id: string): Promise<Client> {
     const c = await clientsService.get(u.tenantId, id);

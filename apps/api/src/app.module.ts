@@ -5,6 +5,7 @@ import { AiController } from './modules/ai/ai.controller.js';
 import { AuthController } from './modules/auth/auth.controller.js';
 import { ClientsController } from './modules/clients/clients.controller.js';
 import { DashboardController } from './modules/dashboard/dashboard.controller.js';
+import { GeoController } from './modules/geo/geo.controller.js';
 import { TripsController } from './modules/trips/trips.controller.js';
 
 @Module({
@@ -13,6 +14,7 @@ import { TripsController } from './modules/trips/trips.controller.js';
     AuthController,
     ClientsController,
     DashboardController,
+    GeoController,
     TripsController,
     AiController,
   ],

@@ -87,6 +87,19 @@ export class ClientsService {
     return this.get(tenantId, id);
   }
 
+  /** Pontos leves para o mapa (todos os clientes geocodificados do tenant). */
+  async mapPoints(
+    tenantId: string,
+    limit = 10000,
+  ): Promise<{ lat: number; lng: number; origem: string; situacao: string; quality: string }[]> {
+    return queryInTenant(
+      tenantId,
+      sql`SELECT ST_Y(geom::geometry) AS lat, ST_X(geom::geometry) AS lng,
+                 origem, situacao, geocode_quality AS quality
+            FROM clients WHERE geom IS NOT NULL LIMIT ${limit}`,
+    );
+  }
+
   async nearby(tenantId: string, q: NearbyQuery): Promise<NearbyClient[]> {
     const pt = sql`ST_SetSRID(ST_MakePoint(${q.lng}, ${q.lat}), 4326)::geography`;
     const conds: SQL[] = [sql`c.geom IS NOT NULL`, sql`ST_DWithin(c.geom, ${pt}, ${q.raioKm * 1000})`];

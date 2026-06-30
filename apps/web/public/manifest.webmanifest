@@ -1,0 +1,10 @@
+{
+  "name": "Mapeando — Copiloto Comercial",
+  "short_name": "Mapeando",
+  "description": "Copiloto de inteligência comercial: viagens viram oportunidades.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#1b66db",
+  "icons": []
+}
