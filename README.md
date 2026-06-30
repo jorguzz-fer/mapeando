@@ -87,4 +87,11 @@ pnpm test         # testes (Score) — Vitest
 pnpm build        # build de todos os pacotes
 ```
 
+## Deploy (Coolify / VPS)
+
+Stack completa via Docker Compose (`docker-compose.prod.yml`): PostGIS + Redis +
+API + Web (o `web` é o único público e faz proxy de `/api`). Passo a passo em
+[`docs/DEPLOY-coolify.md`](docs/DEPLOY-coolify.md); variáveis em
+[`.env.production.example`](.env.production.example).
+
 Decisões e itens adiados estão em [`docs/adr/`](docs/adr/).

@@ -11,8 +11,9 @@ import { runMigrations } from './db/migrate.js';
 async function bootstrap() {
   const logger = new Logger('bootstrap');
 
-  // Em dev, aplica migrations pendentes no boot (idempotente).
-  if (env.NODE_ENV !== 'production') {
+  // Aplica migrations pendentes no boot (idempotente) — facilita o deploy.
+  // RUN_MIGRATIONS_ON_BOOT=false desliga (ex.: múltiplas réplicas).
+  if (process.env.RUN_MIGRATIONS_ON_BOOT !== 'false') {
     try {
       const applied = await runMigrations();
       if (applied.length) logger.log(`migrations aplicadas: ${applied.join(', ')}`);

@@ -1,0 +1,11 @@
+**/node_modules
+**/dist
+**/build
+.git
+.github
+**/*.log
+**/.env
+**/.env.*
+infra/osrm
+infra/nominatim-data
+.claude
