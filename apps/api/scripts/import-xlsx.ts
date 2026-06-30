@@ -73,7 +73,7 @@ async function main() {
   // eslint-disable-next-line no-console
   console.log(`[import] lendo ${file}`);
   const wb = xlsx.readFile(file);
-  const ws = wb.Sheets['Enriquecimento'] ?? wb.Sheets[wb.SheetNames[0]!];
+  const ws = wb.Sheets['Enriquecimento'] ?? wb.Sheets[wb.SheetNames[0]!]!;
   const rows = xlsx.utils.sheet_to_json<Record<string, unknown>>(ws, { defval: null });
   // eslint-disable-next-line no-console
   console.log(`[import] ${rows.length} linhas`);
