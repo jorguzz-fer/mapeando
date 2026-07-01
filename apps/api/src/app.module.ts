@@ -7,6 +7,7 @@ import { ClientsController } from './modules/clients/clients.controller.js';
 import { DashboardController } from './modules/dashboard/dashboard.controller.js';
 import { GeoController } from './modules/geo/geo.controller.js';
 import { TripsController } from './modules/trips/trips.controller.js';
+import { SpaController } from './spa.controller.js';
 
 @Module({
   controllers: [
@@ -17,6 +18,8 @@ import { TripsController } from './modules/trips/trips.controller.js';
     GeoController,
     TripsController,
     AiController,
+    // catch-all do SPA — deve ser o ÚLTIMO (rota curinga @Get('*'))
+    SpaController,
   ],
   providers: [AuthGuard],
 })

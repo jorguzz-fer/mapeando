@@ -89,9 +89,12 @@ pnpm build        # build de todos os pacotes
 
 ## Deploy (Coolify / VPS)
 
-Stack completa via Docker Compose (`docker-compose.prod.yml`): PostGIS + Redis +
-API + Web (o `web` é o único público e faz proxy de `/api`). Passo a passo em
-[`docs/DEPLOY-coolify.md`](docs/DEPLOY-coolify.md); variáveis em
+Recomendado: **1 Dockerfile + deploy do GitHub**. O `Dockerfile` da raiz builda o
+front e o serve pela própria API (um container só). No Coolify: **1 Application**
+(Build Pack Dockerfile) + **PostgreSQL** (PostGIS) + **Redis** como recursos.
+Passo a passo em [`docs/DEPLOY-coolify.md`](docs/DEPLOY-coolify.md); variáveis em
 [`.env.production.example`](.env.production.example).
+
+> Alternativa: stack única via `docker-compose.prod.yml` (PostGIS+Redis+API+Web).
 
 Decisões e itens adiados estão em [`docs/adr/`](docs/adr/).

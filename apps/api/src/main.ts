@@ -1,4 +1,6 @@
 import 'reflect-metadata';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import fastifyCookie from '@fastify/cookie';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
@@ -38,8 +40,18 @@ async function bootstrap() {
     .build();
   SwaggerModule.setup('api/docs', app, SwaggerModule.createDocument(app, config));
 
+  // Servir o front (SPA) do mesmo container quando WEB_DIST aponta para o build.
+  // Assim o deploy é um único Dockerfile: a API entrega /api e o app React.
+  // `wildcard: false` registra rotas explícitas por arquivo (sem /* conflitante);
+  // o fallback de rotas do SPA é feito pelo SpaController (@Get('*')).
+  const webDist = process.env.WEB_DIST;
+  if (webDist && existsSync(join(webDist, 'index.html'))) {
+    app.useStaticAssets({ root: webDist, prefix: '/', wildcard: false });
+    logger.log(`Front servido de ${webDist}`);
+  }
+
   await app.listen({ port: env.API_PORT, host: '0.0.0.0' });
-  logger.log(`Mapeando API em http://localhost:${env.API_PORT} (docs: /api/docs)`);
+  logger.log(`Mapeando em http://localhost:${env.API_PORT} (API: /api, docs: /api/docs)`);
   logger.log(`IA: ${env.ANTHROPIC_API_KEY ? 'configurada' : 'desativada (sem ANTHROPIC_API_KEY)'}`);
 }
 
